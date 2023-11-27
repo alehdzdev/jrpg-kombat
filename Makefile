@@ -23,7 +23,7 @@ down: ## Elimina los contenedores
 	docker compose -f docker-compose.yml down -v
 
 restart: ## Reinicia ejecución de contenedores
-	docker compose -f docker-compose.yml stop && docker compose -f docker compose.yml start
+	docker compose -f docker-compose.yml stop && docker compose -f docker-compose.yml start
 
 migrations: ## Crea migraciones en el proyecto
 	docker compose -f docker-compose.yml exec web /bin/sh -c "python manage.py makemigrations"
