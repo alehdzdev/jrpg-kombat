@@ -77,19 +77,21 @@ def get_first_turn(player1: dict, player2: dict) -> str:
     return 'player1'
 
 
-def combine_players_moves(first_turn_list, second_turn_list) -> list:
-    total_length = min(len(first_turn_list), len(second_turn_list))
+def combine_players_moves(first_turn_list, first_turn_player_name, second_turn_list, second_turn_player_name) -> list:
+    while len(first_turn_list) < len(second_turn_list):
+        first_turn_list.append({
+            'text': f'{first_turn_player_name} está confundido y se quedó estático',
+            'value': 0,
+            'player': first_turn_list[0].get('player')
+        })
+    while len(second_turn_list) < len(first_turn_list):
+        second_turn_list.append({
+            'text': f'{second_turn_player_name} está confundido y se quedó estático',
+            'value': 0,
+            'player': second_turn_list[0].get('player')
+        })
 
-    combine_moves = []
-
-    for index in range(total_length):
-        combine_moves.append(first_turn_list[index])
-        combine_moves.append(second_turn_list[index])
-
-    combine_moves.extend(first_turn_list[total_length:])
-    combine_moves.extend(second_turn_list[total_length:])
-
-    return combine_moves
+    return [item for pair in zip(first_turn_list, second_turn_list) for item in pair]
 
 
 def kombat(data: dict):
@@ -97,8 +99,8 @@ def kombat(data: dict):
         name='Tonyn',
         last_name='Stallone',
         combinations={
-            'DSDP': {'name': 'usa un Taladoken', 'value': 3},
-            'SDK': {'name': 'conecta un Remuyuken', 'value': 2},
+            'DSDP': {'name': 'conecta un Taladoken', 'value': 3},
+            'SDK': {'name': 'usa un Remuyuken', 'value': 2},
             'P': {'name': 'le da un puñetazo', 'value': 1},
             'K': {'name': 'da una patada', 'value': 1},
             'W': {'name': 'salta', 'value': 0},
@@ -126,28 +128,31 @@ def kombat(data: dict):
     player1_life = 6
     player2_life = 6
     first_turn = get_first_turn(player1.dict, player2.dict)
-    # kombat = [item for pair in zip(player1.get_moves(), player2.get_moves()) for item in pair] if first_turn == 'player1' else [item for pair in zip(player2.get_moves(), player1.get_moves()) for item in pair] # noqa
-    kombat = combine_players_moves(player1.get_moves('player1'), player2.get_moves('player2')) if first_turn == 'player1' else combine_players_moves(player2.get_moves('player2'), player1.get_moves('player1')) # noqa
+    player1_moves = player1.get_moves('player1')
+    player2_moves = player2.get_moves('player2')
+    kombat = combine_players_moves(player1_moves, player1.name, player2_moves, player2.name) if first_turn == 'player1' else combine_players_moves(player2_moves, player2.name, player1_moves, player1.name) # noqa
     finish = False
     loser = ''
     index = 0
+    kombat_story = []
     while not finish:
         move = kombat[index]
         turn = move.get('player')
+        turn_action = move.get('text')
+        turn_value = move.get('value')
+        kombat_story.append(turn_action)
+        print(turn_action)
         if turn == 'player1':
-            print(move.get('text'))
-            player2_life -= move.get('value')
+            player2_life -= turn_value
             finish = True if player2_life <= 0 else False
             loser = 'player2'
-            index += 1
         else:
-            print(move.get('text'))
-            player1_life -= move.get('value')
+            player1_life -= turn_value
             finish = True if player1_life <= 0 else False
             loser = 'player1'
-            index += 1
+        index += 1
 
     result = f"El ganador del TalanaKombatJRPG es {player1.name if loser == 'player2' else player2.name}"
     print(result)
-    kombat.append({'text': result, 'value': 0})
-    return kombat
+    kombat_story.append(result)
+    return kombat_story

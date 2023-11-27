@@ -4,8 +4,8 @@ from rest_framework import serializers
 
 
 class PlayerSerializer(serializers.Serializer):
-    movements = serializers.ListField(child=serializers.CharField(max_length=5))
-    hits = serializers.ListField(child=serializers.CharField(max_length=1))
+    movimientos = serializers.ListField(child=serializers.CharField(max_length=5, allow_blank=True))
+    golpes = serializers.ListField(child=serializers.CharField(max_length=1, allow_blank=True))
 
 
 class KombatRequestSerializer(serializers.Serializer):

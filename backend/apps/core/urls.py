@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 # Django
-from django.urls import path, include
+from django.urls import path
 
-# Third Party
-from rest_framework.routers import SimpleRouter
+# Local
+from core.views import KombatCreateApi
 
-router = SimpleRouter()
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('kombat', KombatCreateApi.as_view(), name='kombat')
 ]
